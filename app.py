@@ -8,6 +8,9 @@ model = joblib.load('spam_model.pkl')
 def home():
     return render_template('compose.html')
 
+@app.route('/inbox')
+def inbox():
+    return render_template('listing.html')
 @app.route('/predict', methods=['POST'])
 def predict():
     message = request.form['message']  # récupère le message depuis le formulaire
