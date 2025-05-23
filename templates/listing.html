@@ -5,6 +5,13 @@
 								<div class="flex-lg-row-fluid ms-lg-7 ms-xl-10">
 									<!--begin::Card-->
 									<div class="card">
+										{% for email in emails %}
+                <div class="alert mt-4">
+                    <span class="result">
+                        Résultat : {{ email.content }}
+                    </span>
+                </div>
+            {% endfor %}
 										<div class="card-header align-items-center py-5 gap-2 gap-md-5">
 											<!--begin::Actions-->
 											<div class="d-flex flex-wrap gap-1">

@@ -29,7 +29,8 @@
 										</div>
 										<div class="card-body p-0">
 											<!--begin::Form-->
-											<form id="kt_inbox_compose_form">
+											<form id="kt_inbox_compose_form" method="POST" action="/predict">
+												<input type="text" name="message">
 												<!--begin::Body-->
 												<div class="d-block">
 													<!--begin::To-->
@@ -125,12 +126,12 @@
 													<!--begin::Actions-->
 													<div class="d-flex align-items-center me-3">
 														<!--begin::Send-->
-														<div class="btn-group me-4">
+				
 															<!--begin::Submit-->
-															<span class="btn btn-primary fs-bold px-6" data-kt-inbox-form="send">
+															<span class="btn btn-primary fs-bold px-6" type="submit">
 																<span class="indicator-label">Envoyer</span>
-																<span class="indicator-progress">Please wait... 
-																<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+														
+									
 															</span>
 															<!--end::Submit-->
 															<!--begin::Send options-->
@@ -161,13 +162,21 @@
 																<!--end::Menu-->
 															</span>
 															<!--end::Send options-->
-														</div>
+														<button type="submit"> Envoyer
+												<button>
 														<!--end::Send-->
 														
 													</div>
 													<!--end::Actions-->
 													
 												</div>
+												{% if prediction %}
+                <div class="alert mt-4 {{ 'alert-danger' if prediction=='SPAM' else 'alert-success' }}">
+                    <span class="result {{ 'spam' if prediction=='SPAM' else 'non-spam' }}">
+                        Résultat : {{ prediction }}
+                    </span>
+                </div>
+            {% endif %}
 												<!--end::Footer-->
 											</form>
 											<!--end::Form-->
