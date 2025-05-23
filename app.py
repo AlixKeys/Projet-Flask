@@ -11,6 +11,19 @@ def home():
 @app.route('/inbox')
 def inbox():
     return render_template('listing.html')
+
+@app.route('/draft')
+def draft():
+    return render_template('draft.html')
+
+@app.route('/message_sent')
+def message_sent():
+    return render_template('message_sent.html')
+
+@app.route('/spam')
+def spam():
+    return render_template('spam.html')
+
 @app.route('/predict', methods=['POST'])
 def predict():
     message = request.form['message']  # récupère le message depuis le formulaire
