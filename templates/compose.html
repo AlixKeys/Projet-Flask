@@ -1,189 +1,97 @@
 {% extends 'base.html' %}
 
 {% block content %}
-					<!--begin::Header-->
-					<div id="kt_header" class="header align-items-stretch">
-						<!--begin::Container-->
-						<div class="container-xxl d-flex align-items-stretch justify-content-between">
-							<!--begin::Logo-->
-							<a href="index.html" class="d-flex align-items-center d-lg-none">
-								
-								<img alt="Logo" src="{{ url_for('static', filename='media/logos/logo-1.svg') }}"  class="h-30px" />
-							</a>
-							<!--end::Logo-->
-							
-						</div>
-						<!--end::Container-->
-					</div>
-					<!--end::Header-->
+<!--begin::Header-->
+<div id="kt_header" class="header align-items-stretch">
+    <div class="container-xxl d-flex align-items-stretch justify-content-between">
+        <a href="index.html" class="d-flex align-items-center d-lg-none">
+            <img alt="Logo" src="{{ url_for('static', filename='media/logos/logo-1.svg') }}" class="h-30px" />
+        </a>
+    </div>
+</div>
+<!--end::Header-->
 
-<!--begin::Container-->
-					<!--begin::Content-->
-								<div class="flex-lg-row-fluid ms-lg-7 ms-xl-10">
-									<!--begin::Card-->
-									<div class="card">
-										<div class="card-header align-items-center">
-											<div class="card-title">
-												<h2>Rediger l'email</h2>
-											</div>
-										</div>
-										<div class="card-body p-0">
-											<!--begin::Form-->
-											<form id="kt_inbox_compose_form" method="POST" action="/predict">
-												<input type="text" name="message">
-												<!--begin::Body-->
-												<div class="d-block">
-													<!--begin::To-->
-													<div class="d-flex align-items-center border-bottom px-8 min-h-50px">
-														<!--begin::Label-->
-														<div class="text-dark fw-bolder w-75px">A:</div>
-														<!--end::Label-->
-														<!--begin::Input-->
-														<input type="text" class="form-control form-control-transparent border-0" name="compose_to" value="" data-kt-inbox-form="tagify" />
-														<!--end::Input-->
-														<!--begin::CC & BCC buttons-->
-														<div class="ms-auto w-75px text-end">
-															<span class="text-muted fs-bold cursor-pointer text-hover-primary me-2" data-kt-inbox-form="cc_button">Cc</span>
-															<span class="text-muted fs-bold cursor-pointer text-hover-primary" data-kt-inbox-form="bcc_button">Bcc</span>
-														</div>
-														<!--end::CC & BCC buttons-->
-													</div>
-													<!--end::To-->
-													<!--begin::CC-->
-													<div class="d-none align-items-center border-bottom ps-8 pe-5 min-h-50px" data-kt-inbox-form="cc">
-														<!--begin::Label-->
-														<div class="text-dark fw-bolder w-75px">Cc:</div>
-														<!--end::Label-->
-														<!--begin::Input-->
-														<input type="text" class="form-control form-control-transparent border-0" name="compose_cc" value="" data-kt-inbox-form="tagify" />
-														<!--end::Input-->
-														<!--begin::Close-->
-														<span class="btn btn-clean btn-xs btn-icon" data-kt-inbox-form="cc_close">
-															<i class="la la-close"></i>
-														</span>
-														<!--end::Close-->
-													</div>
-													<!--end::CC-->
-													<!--begin::BCC-->
-													<div class="d-none align-items-center border-bottom inbox-to-bcc ps-8 pe-5 min-h-50px" data-kt-inbox-form="bcc">
-														<!--begin::Label-->
-														<div class="text-dark fw-bolder w-75px">Bcc:</div>
-														<!--end::Label-->
-														<!--begin::Input-->
-														<input type="text" class="form-control form-control-transparent border-0" name="compose_bcc" value="" data-kt-inbox-form="tagify" />
-														<!--end::Input-->
-														<!--begin::Close-->
-														<span class="btn btn-clean btn-xs btn-icon" data-kt-inbox-form="bcc_close">
-															<i class="la la-close"></i>
-														</span>
-														<!--end::Close-->
-													</div>
-													<!--end::BCC-->
-													<!--begin::Subject-->
-													<div class="border-bottom">
-														<input class="form-control form-control-transparent border-0 px-8 min-h-45px" name="compose_subject" placeholder="Objet" />
-													</div>
-													<!--end::Subject-->
-													<!--begin::Message-->
-													<div id="kt_inbox_form_editor" class="bg-transparent border-0 h-350px px-3"></div>
-													<!--end::Message-->
-													<!--begin::Attachments-->
-													<div class="dropzone dropzone-queue px-8 py-4" id="kt_inbox_reply_attachments" data-kt-inbox-form="dropzone">
-														<div class="dropzone-items">
-															<div class="dropzone-item" style="display:none">
-																<!--begin::Dropzone filename-->
-																<div class="dropzone-file">
-																	<div class="dropzone-filename" title="some_image_file_name.jpg') }}">
-																		<span data-dz-name="">some_image_file_name.jpg</span>
-																		<strong>(
-																		<span data-dz-size="">340kb</span>)</strong>
-																	</div>
-																	<div class="dropzone-error" data-dz-errormessage=""></div>
-																</div>
-																<!--end::Dropzone filename-->
-																<!--begin::Dropzone progress-->
-																<div class="dropzone-progress">
-																	<div class="progress">
-																		<div class="progress-bar bg-primary" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-dz-uploadprogress=""></div>
-																	</div>
-																</div>
-																<!--end::Dropzone progress-->
-																<!--begin::Dropzone toolbar-->
-																<div class="dropzone-toolbar">
-																	<span class="dropzone-delete" data-dz-remove="">
-																		<i class="bi bi-x fs-1"></i>
-																	</span>
-																</div>
-																<!--end::Dropzone toolbar-->
-															</div>
-														</div>
-													</div>
-													<!--end::Attachments-->
-												</div>
-												<!--end::Body-->
-												<!--begin::Footer-->
-												<div class="d-flex flex-stack flex-wrap gap-2 py-5 ps-8 pe-5 border-top">
-													<!--begin::Actions-->
-													<div class="d-flex align-items-center me-3">
-														<!--begin::Send-->
-				
-															<!--begin::Submit-->
-															<span class="btn btn-primary fs-bold px-6" type="submit">
-																<span class="indicator-label">Envoyer</span>
-														
-									
-															</span>
-															<!--end::Submit-->
-															<!--begin::Send options-->
-															<span class="btn btn-primary btn-icon fs-bold" role="button">
-																<span class="btn btn-icon" data-kt-menu-trigger="click" data-kt-menu-placement="top-start">
-																	<!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg') }}-->
-																	<span class="svg-icon svg-icon-2 m-0">
-																		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-																			<path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
-																		</svg>
-																	</span>
-																	<!--end::Svg Icon-->
-																</span>
-																<!--begin::Menu-->
-																<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-150px py-4" data-kt-menu="true">
-																	
-																	<!--begin::Menu item-->
-																	<div class="menu-item px-3">
-																		<a href="#" class="menu-link px-3">Tester</a>
-																	</div>
-																	<!--end::Menu item-->
-																	<!--begin::Menu item-->
-																	<div class="menu-item px-3">
-																		<a href="#" class="menu-link px-3">Fermer</a>
-																	</div>
-																	<!--end::Menu item-->
-																</div>
-																<!--end::Menu-->
-															</span>
-															<!--end::Send options-->
-														<button type="submit"> Envoyer
-												<button>
-														<!--end::Send-->
-														
-													</div>
-													<!--end::Actions-->
-													
-												</div>
-												{% if prediction %}
-                <div class="alert mt-4 {{ 'alert-danger' if prediction=='SPAM' else 'alert-success' }}">
-                    <span class="result {{ 'spam' if prediction=='SPAM' else 'non-spam' }}">
-                        Résultat : {{ prediction }}
-                    </span>
+<!--begin::Content-->
+<div class="flex-lg-row-fluid ms-lg-7 ms-xl-10">
+    <div class="card">
+        <div class="card-header align-items-center">
+            <div class="card-title">
+                <h2>Rédiger l'email</h2>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <form id="kt_inbox_compose_form" method="POST" action="/predict">
+                <div class="d-block">
+                    <!--begin::To-->
+                    <div class="d-flex align-items-center border-bottom px-8 min-h-50px">
+                        <div class="text-dark fw-bolder w-75px">À:</div>
+                        <input type="text" class="form-control form-control-transparent border-0" name="sender" placeholder="Entrez l'adresse e-mail" />
+                        <div class="ms-auto w-75px text-end">
+                            <span class="text-muted fs-bold cursor-pointer text-hover-primary me-2" data-kt-inbox-form="cc_button">Cc</span>
+                            <span class="text-muted fs-bold cursor-pointer text-hover-primary" data-kt-inbox-form="bcc_button">Bcc</span>
+                        </div>
+                    </div>
+                    <!--end::To-->
+
+                    <!--begin::CC-->
+                    <div class="d-none align-items-center border-bottom ps-8 pe-5 min-h-50px" data-kt-inbox-form="cc">
+                        <div class="text-dark fw-bolder w-75px">Cc:</div>
+                        <input type="text" class="form-control form-control-transparent border-0" name="compose_cc" placeholder="Entrez l'adresse e-mail" />
+                        <span class="btn btn-clean btn-xs btn-icon" data-kt-inbox-form="cc_close">
+                            <i class="la la-close"></i>
+                        </span>
+                    </div>
+                    <!--end::CC-->
+
+                    <!--begin::BCC-->
+                    <div class="d-none align-items-center border-bottom inbox-to-bcc ps-8 pe-5 min-h-50px" data-kt-inbox-form="bcc">
+                        <div class="text-dark fw-bolder w-75px">Bcc:</div>
+                        <input type="text" class="form-control form-control-transparent border-0" name="compose_bcc" placeholder="Entrez l'adresse e-mail" />
+                        <span class="btn btn-clean btn-xs btn-icon" data-kt-inbox-form="bcc_close">
+                            <i class="la la-close"></i>
+                        </span>
+                    </div>
+                    <!--end::BCC-->
+
+                    <!--begin::Subject-->
+                    <div class="border-bottom">
+                        <input class="form-control form-control-transparent border-0 px-8 min-h-45px" name="objet" placeholder="Objet" />
+                    </div>
+                    <!--end::Subject-->
+
+                    <!--begin::Message-->
+                    <div class="px-8 py-4">
+                        <textarea class="form-control" name="compose_message" rows="10" placeholder="Rédigez votre message ici..."></textarea>
+                    </div>
+                    <!--end::Message-->
+
+                    <!--begin::Attachments-->
+                    <div class="px-8 py-4">
+                        <input type="file" name="file" class="form-control" />
+                    </div>
+                    <!--end::Attachments-->
                 </div>
-            {% endif %}
-												<!--end::Footer-->
-											</form>
-											<!--end::Form-->
-										</div>
-									</div>
-									<!--end::Card-->
-								</div>
-								<!--end::Content-->
-					<!--end::Container-->
+
+                <!--begin::Footer-->
+                <div class="d-flex flex-stack flex-wrap gap-2 py-5 ps-8 pe-5 border-top">
+                    <div class="d-flex align-items-center me-3">
+                        <button type="submit" class="btn btn-success fs-bold px-6">Envoyer</button>
+                        <div class="dropdown ms-2">
+                            <button class="btn btn-light btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Tester</a></li>
+                                <li><a class="dropdown-item" href="#">Fermer</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Footer-->
+
+            </form>
+        </div>
+    </div>
+</div>
+<!--end::Content-->
 {% endblock content %}

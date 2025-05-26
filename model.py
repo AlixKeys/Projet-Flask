@@ -11,6 +11,9 @@ class User(db.Model, UserMixin):
 
 class Email(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    isRead= db.Column(db.Boolean)  
+    isDelete= db.Column(db.Boolean)   
+    objet= db.Column(db.String(200)) 
     sender = db.Column(db.String(120))  # Optionnel : adresse de l'expéditeur
     content = db.Column(db.Text, nullable=False)  # Le message
     prediction = db.Column(db.String(10), nullable=False)  # "SPAM" ou "NON-SPAM"

@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for,flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, login_required, logout_user, UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import joblib
 import os
+from datetime import datetime
+from flask_migrate import Migrate
+
 
 # Initialisation de l'application Flask
 app = Flask(__name__)
@@ -15,6 +18,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialisation de SQLAlchemy
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 
 # Initialisation de Flask-Login
 login_manager = LoginManager()
@@ -31,13 +36,22 @@ class AppUser(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
+    emails = db.relationship('Email', backref='user', lazy=True)
+
 
 # Modèle email
 class Email(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    isRead= db.Column(db.Boolean)  
+    isDelete= db.Column(db.Boolean)    
     content = db.Column(db.Text, nullable=False)
+    objet = db.Column(db.String(200))               
+    sender = db.Column(db.String(120)) 
     prediction = db.Column(db.String(10), nullable=False)
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', name='fk_email_user_id'), nullable=False)
+
+
 
 # Fonction de chargement utilisateur
 @login_manager.user_loader
@@ -80,7 +94,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# Accueil (compose)
+# Page d'accueil (compose)
 @app.route('/compose', methods=['GET', 'POST'])
 @login_required
 def home():
@@ -95,41 +109,92 @@ def home():
 @app.route('/inbox')
 @login_required
 def inbox():
-    emails = Email.query.filter_by(prediction="NON-SPAM").order_by(Email.timestamp.desc()).all()
-    return render_template('listing.html', emails=emails)
-
-# Brouillons
-@app.route('/draft')
+    emails = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM").order_by(Email.timestamp.desc()).all()
+    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM").count()
+    spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
+    return render_template('listing.html', emails=emails,email_count=email_count,spam_count=spam_count)
+    
+# suppression de mail
+@app.route('/delete_email/<int:email_id>', methods=['POST'])
 @login_required
-def draft():
-    return render_template('draft.html')
+def delete_email(email_id):
+    email = Email.query.filter_by(id=email_id, user_id=current_user.id).first()
+
+    if email:
+        email.isDelete = True  # on le marque comme supprimé
+        db.session.commit()
+        flash("Email supprimé avec succès.", "success")
+    else:
+        flash("Email introuvable ou non autorisé.", "danger")
+
+    return redirect(url_for('inbox'))
 
 # Messages envoyés
 @app.route('/message_sent')
 @login_required
 def message_sent():
-    return render_template('message_sent.html')
+    emails = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM").order_by(Email.timestamp.desc()).all()
+    return render_template('message_sent.html', emails=emails)
+
+
+# Corbeille
+@app.route('/draft')
+@login_required
+def draft():
+    emails = Email.query.filter_by(user_id=current_user.id).order_by(Email.timestamp.desc()).all()
+    return render_template('draft.html', emails=emails)
+
 
 # Spam
 @app.route('/spam')
 @login_required
 def spam():
-    emails = Email.query.filter_by(prediction="SPAM").order_by(Email.timestamp.desc()).all()
-    return render_template('spam.html', emails=emails)
+    emails = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).order_by(Email.timestamp.desc()).all()
+    spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
+    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM").count()
+    return render_template('spam.html', emails=emails,email_count=email_count,spam_count=spam_count)
 
 # Enregistrement + prédiction
 @app.route('/predict', methods=['POST'])
 @login_required
 def predict():
-    message = request.form['message']
+    objet = request.form["objet"]
+    sender = request.form["sender"]
+    message = request.form['compose_message']
     prediction = model.predict([message])[0]
     result = "SPAM" if prediction == 1 else "NON-SPAM"
 
-    new_email = Email(content=message, prediction=result)
+    new_email = Email(
+        content=message,
+        isDelete=False,
+        isRead=False,
+        objet=objet,
+        sender=sender,
+        prediction=result,
+        user_id=current_user.id  # <-- ajout du user_id
+    )
     db.session.add(new_email)
     db.session.commit()
 
     return render_template('compose.html', prediction=result)
+
+
+# Mot de passe oublié
+@app.route('/forgot_password')
+def forgot_password():
+    return render_template('forgot_password.html')
+
+@app.template_filter('smart_datetime')
+def smart_datetime(value):
+    """Affiche l'heure si la date est aujourd'hui, sinon la date."""
+    if not isinstance(value, datetime):
+        return value  # sécurité
+    now = datetime.now()
+    if value.date() == now.date():
+        return value.strftime("%H:%M")
+    else:
+        return value.strftime("%d %B")  # ex: 26 mai 2025
+
 
 # Lancer le serveur
 if __name__ == '__main__':

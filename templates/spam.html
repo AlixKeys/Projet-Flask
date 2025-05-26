@@ -5,6 +5,7 @@
 								<div class="flex-lg-row-fluid ms-lg-7 ms-xl-10">
 									<!--begin::Card-->
 									<div class="card">
+										
 										<div class="card-header align-items-center py-5 gap-2 gap-md-5">
 											<!--begin::Actions-->
 											<div class="d-flex flex-wrap gap-1">
@@ -82,7 +83,7 @@
 												</a>
 												<!--end::Delete-->
 
-                                                <div class="text-dark mb-1" ">
+                                                <div class="text-dark mb-1" >
 																<!--begin::Heading-->
 																<a href="reply.html" class="text-dark">
 																	<span class="fw-bolder" style="font-size: 23px;">Spam</span>
@@ -105,7 +106,7 @@
 														</svg>
 													</span>
 													<!--end::Svg Icon-->
-													<input type="text" data-kt-inbox-listing-filter="search" class="form-control form-control-sm form-control-solid mw-100 min-w-150px min-w-md-200px ps-12" placeholder="Rechercher dans Spam" />
+													<input type="text" data-kt-inbox-listing-filter="search" class="form-control form-control-sm form-control-solid mw-100 min-w-150px min-w-md-200px ps-12" placeholder="Rechercher dans Brouillons" />
 												</div>
 												<!--end::Search-->
 												<!--begin::Sort-->
@@ -162,6 +163,7 @@
 												<!--end::Table head-->
 												<!--begin::Table body-->
 												<tbody>
+													{%for email in emails %}
 													<tr>
 														<td class="ps-9">
 															<!--begin::Checkbox-->
@@ -200,12 +202,12 @@
 																<!--begin::Avatar-->
 																<div class="symbol symbol-35px me-3">
 																	<div class="symbol-label bg-light-danger">
-																		<span class="text-danger">M</span>
+																		<span class="text-danger">De :</span>
 																	</div>
 																</div>
 																<!--end::Avatar-->
 																<!--begin::Name-->
-																<span class="fw-bold">Melody Macy</span>
+																<span class="fw-bold">{{email.sender}}</span>
 																<!--end::Name-->
 															</a>
 														</td>
@@ -215,25 +217,25 @@
 															<div class="text-dark mb-1">
 																<!--begin::Heading-->
 																<a href="reply.html" class="text-dark">
-																	<span class="fw-bolder">Digital PPV Customer Confirmation</span>
+																	<span class="fw-bolder">{{email.objet}}</span>
 																	<span class="fw-bolder d-none d-md-inine">-</span>
-																	<span class="d-none d-md-inine text-muted">Thank you for ordering UFC 240 Holloway vs Edgar Alternate camera angles...</span>
+																	<span class="d-none d-md-inine text-muted">{{email.content}}</span>
 																</a>
 																<!--end::Heading-->
 															</div>
 															<!--begin::Badges-->
-															<div class="badge badge-light-primary">inbox</div>
-															<div class="badge badge-light-warning">task</div>
+															<div class="badge badge-light-primary">{{email.content}}</div>
+												
 															<!--end::Badges-->
 														</td>
 														<!--end::Title-->
 														<!--begin::Date-->
 														<td class="w-100px text-end fs-7 pe-9">
-															<span class="fw-bold">8:30 PM</span>
+															<span class="fw-bold">{{email.timestamp|smart_datetime}}</span>
 														</td>
 														<!--end::Date-->
 													</tr>
-													
+													{%endfor%}
 													
 												</tbody>
 												<!--end::Table body-->
