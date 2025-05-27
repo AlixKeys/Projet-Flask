@@ -99,30 +99,50 @@ def logout():
 @app.route('/compose', methods=['GET', 'POST'])
 @login_required
 def home():
+    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM", isDelete=False,isRead=False).count()
+    draft_count= Email.query.filter(
+    (
+        (Email.user_id == current_user.id) |
+        (Email.sender == current_user.email)
+    ) &
+    (Email.isDelete == True)
+    ).count()
+    sent_count = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM",isDelete=False).count()
+
+    spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
     if request.method == 'POST':
         message = request.form['message']
         prediction = model.predict([message])[0]
         result = "SPAM" if prediction == 1 else "NON-SPAM"
         return render_template('compose.html', prediction=result)
-    return render_template('compose.html')
+    return render_template('compose.html', email_count=email_count,spam_count=spam_count, draft_count=draft_count, sent_count=sent_count)
 
 # Inbox
 @app.route('/inbox')
 @login_required
 def inbox():
     emails = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM",isDelete=False).order_by(Email.timestamp.desc()).all()
-    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM").count()
+    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM", isDelete=False,isRead=False).count()
+    draft_count= Email.query.filter(
+    (
+        (Email.user_id == current_user.id) |
+        (Email.sender == current_user.email)
+    ) &
+    (Email.isDelete == True)
+    ).count()
+    sent_count = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM",isDelete=False).count()
+
     spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
-    return render_template('listing.html', emails=emails,email_count=email_count,spam_count=spam_count)
+    return render_template('listing.html', emails=emails,email_count=email_count,spam_count=spam_count, draft_count=draft_count, sent_count=sent_count)
     
 # suppression de mail
 @app.route('/delete_email/<int:email_id>', methods=['POST'])
 @login_required
 def delete_email(email_id):
     email = Email.query.filter_by(id=email_id, user_id=current_user.id).first()
-
+    
     if email:
-        email.isDelete = True  # on le marque comme supprimé
+        email.isDelete = False  # on le marque comme supprimé
         db.session.commit()
         flash("Email supprimé avec succès.", "success")
     else:
@@ -134,16 +154,20 @@ def delete_email(email_id):
 @login_required
 def delete_multiple_emails():
     ids = request.form.getlist('email_ids')  # liste des ids cochés
-
     if ids:
         # Filtrer uniquement les emails de l'utilisateur connecté
         emails = Email.query.filter(Email.id.in_(ids), Email.user_id == current_user.id).all()
 
         for email in emails:
-            email.isDelete = True
+            if not email.isDelete:
+                email.isDelete = True
+                flash(f"{len(emails)} email(s) supprimé(s).", "success")
+            else:
+                email.isDelete = False
+                flash(f"{len(emails)} email(s) restauré(s).", "success")
 
         db.session.commit()
-        flash(f"{len(emails)} email(s) supprimé(s).", "success")
+        
     else:
         flash("Aucun email sélectionné.", "warning")
 
@@ -155,8 +179,40 @@ def delete_multiple_emails():
 @login_required
 def message_sent():
     emails = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM",isDelete=False).order_by(Email.timestamp.desc()).all()
-    return render_template('message_sent.html', emails=emails)
+    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM", isDelete=False,isRead=False).count()
+    draft_count= Email.query.filter(
+    (
+        (Email.user_id == current_user.id) |
+        (Email.sender == current_user.email)
+    ) &
+    (Email.isDelete == True)
+    ).count()
+    sent_count = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM",isDelete=False).count()
 
+    spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
+    return render_template('message_sent.html', emails=emails,email_count=email_count,spam_count=spam_count, draft_count=draft_count, sent_count=sent_count)
+
+@app.route('/reply/<int:email_id>')
+@login_required
+def reply(email_id):
+    email = Email.query.filter_by(id=email_id, user_id=current_user.id).first_or_404()
+    
+    # Si non lu, on le marque comme lu
+    if not email.isRead:
+        email.isRead = True
+        db.session.commit()
+    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM", isDelete=False,isRead=False).count()
+    draft_count= Email.query.filter(
+    (
+        (Email.user_id == current_user.id) |
+        (Email.sender == current_user.email)
+    ) &
+    (Email.isDelete == True)
+    ).count()
+    sent_count = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM",isDelete=False).count()
+
+    spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
+    return render_template('reply.html', email=email,email_count=email_count,spam_count=spam_count, draft_count=draft_count, sent_count=sent_count)
 
 # Corbeille
 @app.route('/draft')
@@ -169,8 +225,18 @@ def draft():
     ) &
     (Email.isDelete == True)
 ).order_by(Email.timestamp.desc()).all()
+    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM", isDelete=False,isRead=False).count()
+    draft_count= Email.query.filter(
+    (
+        (Email.user_id == current_user.id) |
+        (Email.sender == current_user.email)
+    ) &
+    (Email.isDelete == True)
+    ).count()
+    sent_count = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM",isDelete=False).count()
 
-    return render_template('draft.html', emails=emails)
+    spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
+    return render_template('draft.html', emails=emails,email_count=email_count,spam_count=spam_count, draft_count=draft_count, sent_count=sent_count)
 
 
 # Spam
@@ -178,9 +244,18 @@ def draft():
 @login_required
 def spam():
     emails = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).order_by(Email.timestamp.desc()).all()
+    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM", isDelete=False,isRead=False).count()
+    draft_count= Email.query.filter(
+    (
+        (Email.user_id == current_user.id) |
+        (Email.sender == current_user.email)
+    ) &
+    (Email.isDelete == True)
+    ).count()
+    sent_count = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM",isDelete=False).count()
+
     spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
-    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM").count()
-    return render_template('spam.html', emails=emails,email_count=email_count,spam_count=spam_count)
+    return render_template('spam.html', emails=emails,email_count=email_count,spam_count=spam_count, draft_count=draft_count, sent_count=sent_count)
 
 # Enregistrement + prédiction
 @app.route('/predict', methods=['POST'])
@@ -191,7 +266,18 @@ def predict():
     message = request.form['compose_message']
     prediction = model.predict([message])[0]
     result = "SPAM" if prediction == 1 else "NON-SPAM"
+    emails = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM",isDelete=False).order_by(Email.timestamp.desc()).all()
+    email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM", isDelete=False,isRead=False).count()
+    draft_count= Email.query.filter(
+    (
+        (Email.user_id == current_user.id) |
+        (Email.sender == current_user.email)
+    ) &
+    (Email.isDelete == True)
+    ).count()
+    sent_count = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM",isDelete=False).count()
 
+    spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
     new_email = Email(
         content=message,
         isDelete=False,
@@ -204,7 +290,7 @@ def predict():
     db.session.add(new_email)
     db.session.commit()
 
-    return render_template('compose.html', prediction=result)
+    return render_template('listing.html', prediction=result, emails=emails,email_count=email_count,spam_count=spam_count, draft_count=draft_count, sent_count=sent_count)
 
 
 # Mot de passe oublié

@@ -25,7 +25,7 @@
                     <!--begin::To-->
                     <div class="d-flex align-items-center border-bottom px-8 min-h-50px">
                         <div class="text-dark fw-bolder w-75px">À:</div>
-                        <input type="text" class="form-control form-control-transparent border-0" name="sender" placeholder="Entrez l'adresse e-mail" />
+                        <input type="text" class="form-control form-control-transparent border-0" name="sender" placeholder="Entrez l'adresse e-mail" required />
                         <div class="ms-auto w-75px text-end">
                             <span class="text-muted fs-bold cursor-pointer text-hover-primary me-2" data-kt-inbox-form="cc_button">Cc</span>
                             <span class="text-muted fs-bold cursor-pointer text-hover-primary" data-kt-inbox-form="bcc_button">Bcc</span>
@@ -55,13 +55,13 @@
 
                     <!--begin::Subject-->
                     <div class="border-bottom">
-                        <input class="form-control form-control-transparent border-0 px-8 min-h-45px" name="objet" placeholder="Objet" />
+                        <input class="form-control form-control-transparent border-0 px-8 min-h-45px" name="objet" placeholder="Objet" required/>
                     </div>
                     <!--end::Subject-->
 
                     <!--begin::Message-->
                     <div class="px-8 py-4">
-                        <textarea class="form-control" name="compose_message" rows="10" placeholder="Rédigez votre message ici..."></textarea>
+                        <textarea class="form-control" name="compose_message" rows="10" placeholder="Rédigez votre message ici..." required></textarea>
                     </div>
                     <!--end::Message-->
 

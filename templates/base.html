@@ -28,7 +28,6 @@ License: For each use you must have a valid license purchased only from above li
 		<meta property="og:site_name" content="Keenthemes | Metronic" />
 		<link rel="canonical" href="https://preview.keenthemes.com/metronic8" />
 		
-		<link rel="shortcut icon" href="{{ url_for('static', filename='media/logos/favicon.ico') }}" />
 		<!--begin::Fonts-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
 		<!--end::Fonts-->
@@ -79,14 +78,7 @@ License: For each use you must have a valid license purchased only from above li
 								</div>
 							</div>
 							<!--end::Heaeder menu toggle-->
-							<!--begin::Header Logo-->
-							<div class="header-logo me-5 me-md-10 flex-grow-1 flex-lg-grow-0">
-								<a href="../../index.html">
-									<img alt="Logo" src="{{ url_for('static', filename='media/logos/logo-demo2.png') }}" class="logo-default h-25px" />
-									<img alt="Logo" src="{{ url_for('static', filename='media/logos/logo-demo2-sticky.png') }}" class="logo-sticky h-25px" />
-								</a>
-							</div>
-							<!--end::Header Logo-->
+							
 							
 						</div>
 						<!--end::Container-->
@@ -116,7 +108,7 @@ License: For each use you must have a valid license purchased only from above li
                                                 <a href="{{ url_for("inbox")}}" >
 												<div class="menu-item mb-3">
 													<!--begin::Inbox-->
-													<span class="menu-link active">
+													<span class="menu-link {% if request.endpoint == 'inbox' %}active{% endif %}">
 														<span class="menu-icon">
 															<!--begin::Svg Icon | path: icons/duotune/communication/com010.svg') }}-->
 															<span class="svg-icon svg-icon-2 me-3">
@@ -127,7 +119,7 @@ License: For each use you must have a valid license purchased only from above li
 															</span>
 															<!--end::Svg Icon-->
 														</span>
-														<span class="menu-title fw-bolder">Boite de reception</span>
+														<span class="menu-title fw-bolder {% if request.endpoint == 'inbox' %}text-primary{% else %}text-muted{% endif %}">Boite de reception</span>
 														<span class="badge badge-light-success">{{email_count}}</span>
 													</span>
 													<!--end::Inbox-->
@@ -139,7 +131,7 @@ License: For each use you must have a valid license purchased only from above li
 												<a href="{{ url_for("draft")}}" >
 												<div class="menu-item mb-3">
 													<!--begin::Draft-->
-													<span class="menu-link">
+													<span class="menu-link {% if request.endpoint == 'draft' %}active{% endif %}">
 														<span class="menu-icon">
 															<!--begin::Svg Icon | path: icons/duotune/general/gen009.svg') }}-->
 															<span class="svg-icon svg-icon-2 me-3">
@@ -150,8 +142,8 @@ License: For each use you must have a valid license purchased only from above li
 															</span>
 															<!--end::Svg Icon-->
 														</span>
-														<span class="menu-title fw-bolder">Corbeille</span>
-														<span class="badge badge-light-warning">5</span>
+														<span class="menu-title fw-bolder {% if request.endpoint == 'draft' %}text-primary{% else %}text-muted{% endif %}">Corbeille</span>
+														<span class="badge badge-light-warning">{{draft_count}}</span>
 													</span>
 													<!--end::Draft-->
 												</div>
@@ -161,7 +153,7 @@ License: For each use you must have a valid license purchased only from above li
 												<a href="{{ url_for("message_sent")}}" >
 												<div class="menu-item mb-3">
 													<!--begin::Sent-->
-													<span class="menu-link">
+													<span class="menu-link {% if request.endpoint == 'message_sent' %}active{% endif %}">
 														<span class="menu-icon">
 															<!--begin::Svg Icon | path: icons/duotune/general/gen016.svg') }}-->
 															<span class="svg-icon svg-icon-2 me-3">
@@ -172,7 +164,8 @@ License: For each use you must have a valid license purchased only from above li
 															</span>
 															<!--end::Svg Icon-->
 														</span>
-														<span class="menu-title fw-bolder">Message envoyes</span>
+														<span class="menu-title fw-bolder {% if request.endpoint == 'message_sent' %}text-primary{% else %}text-muted{% endif %}">Message envoyes</span>
+														<span class="badge badge-light-info">{{sent_count}}</span>
 													</span>
 													<!--end::Sent-->
 												</div>
@@ -182,7 +175,7 @@ License: For each use you must have a valid license purchased only from above li
 												<a href="{{ url_for("spam")}}" >
 												<div class="menu-item">
 													<!--begin::Trash-->
-													<span class="menu-link">
+													<span class="menu-link {% if request.endpoint == 'spam' %}active{% endif %}">
 														<span class="menu-icon">
 															<!--begin::Svg Icon | path: icons/duotune/general/gen027.svg') }}-->
 															<span class="svg-icon svg-icon-2 me-3">
@@ -194,7 +187,7 @@ License: For each use you must have a valid license purchased only from above li
 															</span>
 															<!--end::Svg Icon-->
 														</span>
-														<span class="menu-title fw-bolder">Spam</span>
+														<span class="menu-title fw-bolder {% if request.endpoint == 'spam' %}text-primary{% else %}text-muted{% endif %} ">Spam</span>
 														<span class="badge badge-light-danger">{{spam_count}}</span>
 													</span>
 													<!--end::Trash-->

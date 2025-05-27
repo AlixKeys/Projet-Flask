@@ -2,16 +2,18 @@
 
 {% block content %}
 								<!--begin::Content-->
+								
 								<div class="flex-lg-row-fluid ms-lg-7 ms-xl-10">
 									<!--begin::Card-->
 									<div class="card">
+										<form method="POST" action="{{ url_for('delete_multiple_emails') }}">
 										
 										<div class="card-header align-items-center py-5 gap-2 gap-md-5">
 											<!--begin::Actions-->
 											<div class="d-flex flex-wrap gap-1">
 												<!--begin::Checkbox-->
 												<div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-													<input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_inbox_listing .form-check-input" value="1" />
+													<input class="form-check-input" id="select-all" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_inbox_listing .form-check-input"  />
 												</div>
 												<!--end::Checkbox-->
 												<!--begin::Filter-->
@@ -57,7 +59,7 @@
 												</div>
 												<!--end::Filter-->
 												<!--begin::Reload-->
-												<a href="#" class="btn btn-sm btn-icon btn-clear btn-active-light-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Reload">
+												<button type="submit" onclick="return confirm('Restaurer les messages sélectionnés ?')" class="btn btn-sm btn-icon btn-clear btn-active-light-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Restaurer">
 													<!--begin::Svg Icon | path: icons/duotune/arrows/arr029.svg-->
 													<span class="svg-icon svg-icon-2">
 														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -66,21 +68,11 @@
 														</svg>
 													</span>
 													<!--end::Svg Icon-->
-												</a>
+												</button>
 												<!--end::Reload-->
 												
 												<!--begin::Delete-->
-												<a href="#" class="btn btn-sm btn-icon btn-light btn-active-light-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
-													<!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
-													<span class="svg-icon svg-icon-2">
-														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-															<path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
-															<path opacity="0.5" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z" fill="currentColor" />
-															<path opacity="0.5" d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-												</a>
+						
 												<!--end::Delete-->
 
                                                 <div class="text-dark mb-1" >
@@ -106,7 +98,7 @@
 														</svg>
 													</span>
 													<!--end::Svg Icon-->
-													<input type="text" data-kt-inbox-listing-filter="search" class="form-control form-control-sm form-control-solid mw-100 min-w-150px min-w-md-200px ps-12" placeholder="Rechercher dans Brouillons" />
+													<input type="text" data-kt-inbox-listing-filter="search" class="form-control form-control-sm form-control-solid mw-100 min-w-150px min-w-md-200px ps-12" placeholder="Rechercher dans Corbeille" />
 												</div>
 												<!--end::Search-->
 												<!--begin::Sort-->
@@ -168,7 +160,7 @@
 														<td class="ps-9">
 															<!--begin::Checkbox-->
 															<div class="form-check form-check-sm form-check-custom form-check-solid mt-3">
-																<input class="form-check-input" type="checkbox" value="1" />
+																<input class="form-check-input" name="email_ids" value="{{ email.id }}"  type="checkbox" />
 															</div>
 															<!--end::Checkbox-->
 														</td>
@@ -198,11 +190,11 @@
 														</td>
 														<!--begin::Author-->
 														<td class="w-150px w-md-175px">
-															<a href="reply.html" class="d-flex align-items-center text-dark">
+															<a href="#" class="d-flex align-items-center text-dark">
 																<!--begin::Avatar-->
 																<div class="symbol symbol-35px me-3">
 																	<div class="symbol-label bg-light-danger">
-																		<span class="text-danger">A :</span>
+																		<span class="text-danger">De :</span>
 																	</div>
 																</div>
 																<!--end::Avatar-->
@@ -213,21 +205,22 @@
 														</td>
 														<!--end::Author-->
 														<!--begin::Title-->
-														<td>
-															<div class="text-dark mb-1">
-																<!--begin::Heading-->
-																<a href="reply.html" class="text-dark">
-																	<span class="fw-bolder">{{email.objet}}</span>
-																	<span class="fw-bolder d-none d-md-inine">-</span>
-																	<span class="d-none d-md-inine text-muted">{{email.content}}</span>
-																</a>
-																<!--end::Heading-->
-															</div>
-															<!--begin::Badges-->
-															<div class="badge badge-light-primary">{{email.content}}</div>
-												<div class="badge badge-light-danger">{{email.prediction}}</div>
-															<!--end::Badges-->
-														</td>
+														<td class="overflow-hidden" style="max-width: 300px;">
+    <div class="text-dark mb-1 text-truncate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <!--begin::Heading-->
+        <a href="#" class="text-dark text-truncate d-inline-block" style="max-width: 100%;">
+            <span class="fw-bolder">{{email.objet}}</span>
+            <span class="fw-bolder d-none d-md-inline"> - </span>
+            <span class="d-none d-md-inline text-muted">{{email.content}}</span>
+        </a>
+        <!--end::Heading-->
+    </div>
+    <!--begin::Badges-->
+    <div class="badge badge-light-primary text-truncate" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        {{email.content}}
+    </div>
+    <!--end::Badges-->
+</td>
 														<!--end::Title-->
 														<!--begin::Date-->
 														<td class="w-100px text-end fs-7 pe-9">
@@ -236,14 +229,33 @@
 														<!--end::Date-->
 													</tr>
 													{%endfor%}
+													{% if emails|length == 0 %}
+													<tr>
+														<!--begin::Date-->
+														<td class="w-100px text-center fs-7 pe-9">
+															<span class="fw-bold" style="text-align: center; color: gray;">Vos éléments supprimé apparaitront ici. Restaurez les dans un délais de 30 jours.</span>
+														</td>
+														<!--end::Date-->
+													</tr>
+													{% endif %}
 													
 												</tbody>
 												<!--end::Table body-->
 											</table>
 											<!--end::Table-->
 										</div>
+										</form>
 									</div>
 									<!--end::Card-->
 								</div>
 								<!--end::Content-->
+								
+								<script>
+document.getElementById("select-all").addEventListener("click", function() {
+    let checkboxes = document.querySelectorAll('input[name="email_ids"]');
+    for (let checkbox of checkboxes) {
+        checkbox.checked = this.checked;
+    }
+});
+</script>
 					{% endblock content %}		
