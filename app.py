@@ -6,6 +6,7 @@ import joblib
 import os
 from datetime import datetime
 from flask_migrate import Migrate
+from sqlalchemy import or_
 
 
 # Initialisation de l'application Flask
@@ -109,7 +110,7 @@ def home():
 @app.route('/inbox')
 @login_required
 def inbox():
-    emails = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM").order_by(Email.timestamp.desc()).all()
+    emails = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM",isDelete=False).order_by(Email.timestamp.desc()).all()
     email_count = Email.query.filter_by(sender=current_user.email,prediction="NON-SPAM").count()
     spam_count = Email.query.filter_by(prediction="SPAM",user_id=current_user.id).count()
     return render_template('listing.html', emails=emails,email_count=email_count,spam_count=spam_count)
@@ -129,11 +130,31 @@ def delete_email(email_id):
 
     return redirect(url_for('inbox'))
 
+@app.route('/delete_multiple_emails', methods=['POST'])
+@login_required
+def delete_multiple_emails():
+    ids = request.form.getlist('email_ids')  # liste des ids cochés
+
+    if ids:
+        # Filtrer uniquement les emails de l'utilisateur connecté
+        emails = Email.query.filter(Email.id.in_(ids), Email.user_id == current_user.id).all()
+
+        for email in emails:
+            email.isDelete = True
+
+        db.session.commit()
+        flash(f"{len(emails)} email(s) supprimé(s).", "success")
+    else:
+        flash("Aucun email sélectionné.", "warning")
+
+    return redirect(url_for('inbox'))
+
+
 # Messages envoyés
 @app.route('/message_sent')
 @login_required
 def message_sent():
-    emails = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM").order_by(Email.timestamp.desc()).all()
+    emails = Email.query.filter_by(user_id=current_user.id,prediction="NON-SPAM",isDelete=False).order_by(Email.timestamp.desc()).all()
     return render_template('message_sent.html', emails=emails)
 
 
@@ -141,7 +162,14 @@ def message_sent():
 @app.route('/draft')
 @login_required
 def draft():
-    emails = Email.query.filter_by(user_id=current_user.id).order_by(Email.timestamp.desc()).all()
+    emails = Email.query.filter(
+    (
+        (Email.user_id == current_user.id) |
+        (Email.sender == current_user.email)
+    ) &
+    (Email.isDelete == True)
+).order_by(Email.timestamp.desc()).all()
+
     return render_template('draft.html', emails=emails)
 
 

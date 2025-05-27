@@ -2,16 +2,18 @@
 
 {% block content %}
 								<!--begin::Content-->
-								<div class="flex-lg-row-fluid ms-lg-7 ms-xl-10">
+								
+								<div class="flex-lg-row-fluid ms-lg-7 ms-xl-10" style="overflow-x: auto;">
 									<!--begin::Card-->
 									<div class="card">
+										<form method="POST" action="{{ url_for('delete_multiple_emails') }}">
 										
 										<div class="card-header align-items-center py-5 gap-2 gap-md-5">
 											<!--begin::Actions-->
 											<div class="d-flex flex-wrap gap-1">
 												<!--begin::Checkbox-->
 												<div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-													<input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_inbox_listing .form-check-input" value="1" />
+													<input class="form-check-input" id="select-all" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_inbox_listing .form-check-input"  />
 												</div>
 												<!--end::Checkbox-->
 												<!--begin::Filter-->
@@ -70,17 +72,18 @@
 												<!--end::Reload-->
 												
 												<!--begin::Delete-->
-												<a href="#" class="btn btn-sm btn-icon btn-light btn-active-light-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
-													<!--begin::Svg Icon | path: icons/duotune/general/gen027.svg-->
-													<span class="svg-icon svg-icon-2">
-														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-															<path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
-															<path opacity="0.5" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z" fill="currentColor" />
-															<path opacity="0.5" d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z" fill="currentColor" />
-														</svg>
-													</span>
-													<!--end::Svg Icon-->
-												</a>
+												<button type="submit" onclick="return confirm('Supprimer les messages sélectionnés ?')" 
+            class="btn btn-sm btn-icon btn-light btn-active-light-primary" 
+            data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+        <!-- Svg delete icon -->
+        <span class="svg-icon svg-icon-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
+                <path opacity="0.5" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z" fill="currentColor" />
+                <path opacity="0.5" d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z" fill="currentColor" />
+            </svg>
+        </span>
+    </button>
 												<!--end::Delete-->
 
                                                 <div class="text-dark mb-1" >
@@ -168,7 +171,7 @@
 														<td class="ps-9">
 															<!--begin::Checkbox-->
 															<div class="form-check form-check-sm form-check-custom form-check-solid mt-3">
-																<input class="form-check-input" type="checkbox" value="1" />
+																<input class="form-check-input" name="email_ids" value="{{ email.id }}"  type="checkbox" />
 															</div>
 															<!--end::Checkbox-->
 														</td>
@@ -242,8 +245,18 @@
 											</table>
 											<!--end::Table-->
 										</div>
+										</form>
 									</div>
 									<!--end::Card-->
 								</div>
 								<!--end::Content-->
+								
+								<script>
+document.getElementById("select-all").addEventListener("click", function() {
+    let checkboxes = document.querySelectorAll('input[name="email_ids"]');
+    for (let checkbox of checkboxes) {
+        checkbox.checked = this.checked;
+    }
+});
+</script>
 					{% endblock content %}		
