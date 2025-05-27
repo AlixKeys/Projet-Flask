@@ -27,6 +27,11 @@
 													<!--begin::Heading-->
 													<!--begin::Badges-->
 													<span class="badge badge-light-primary my-1 me-2">inbox</span>
+															{% if email.prediction=="NON-SPAM" %}
+															<span class="badge badge-light-success my-1 me-2">vérifié</span>
+															{% else %}
+															<span class="badge badge-light-danger my-1 me-2">spam</span>
+															{% endif %}
 													<!--end::Badges-->
 												</div>
 												<div class="d-flex">

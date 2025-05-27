@@ -214,6 +214,7 @@
             <span class="fw-bolder">{{email.objet}}</span>
             <span class="fw-bolder d-none d-md-inline"> - </span>
             <span class="d-none d-md-inline text-muted">{{email.content}}</span>
+			
         </a>
         <!--end::Heading-->
     </div>
@@ -227,6 +228,11 @@
 														<!--begin::Date-->
 														<td class="w-100px text-end fs-7 pe-9">
 															<span class="fw-bold">{{email.timestamp|smart_datetime}}</span>
+															{% if email.prediction=="NON-SPAM" %}
+															<span class="badge badge-light-success my-1 me-2">vérifié</span>
+															{% else %}
+															<span class="badge badge-light-danger my-1 me-2">spam</span>
+															{% endif %}
 														</td>
 														<!--end::Date-->
 													</tr>
